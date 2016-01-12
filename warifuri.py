@@ -49,13 +49,10 @@ class Warifuri():
         regex = r'([^\u2E80-\u2E99\u2E9B-\u2EF3\u2F00-\u2FD5\u3005\u3007\u3021-\u3029\u3038-\u303A\u303B\u3400-\u4DB5\u4E00-\u9FD5\uF900-\uFA6D\uFA70-\uFAD9\u20000-\u2A6D6\u2A700-\u2B734\u2B740-\u2B81D\u2B820-\u2CEA1\u2F800-\u2FA1D]+|.)'
         segments = re.findall(regex, kanjis)
         for segment in segments:
-            if (len(segment) > 1):
+            try:
+                readings = self.readings[ord(segment)]
+            except (KeyError, TypeError):
                 readings = [ segment, self.hira_to_kata(segment) ]
-            else:
-                try:
-                    readings = self.readings[ord(segment)]
-                except KeyError:
-                    readings = [ segment, self.hira_to_kata(segment) ]
             chars.append('(' + '|'.join(readings) + ')')
         regex = '^' + ''.join(chars) + '$'
         split = re.findall(regex, furi)
