@@ -17,6 +17,19 @@ class Warifuri():
     def hira_to_kata(self, string):
         return string.translate(self.hira_to_kata_map)
 
+    def filter_kanjidict_reading(self, reading):
+        reading = reading.split('.')[0]
+        reading = self.kata_to_hira(reading)
+        return reading
+
+    def load_readings(self, kanji, readings):
+        readings = [self.filter_kanjidict_reading(r) for r in readings]
+        sokuon = [ 'つ', 'ち', 'く', 'き']
+        for reading in filter(lambda r: r[-1] in sokuon, readings):
+            readings.append(reading[0:-1] + 'っ')
+        readings = readings + [self.hira_to_kata(r) for r in readings]
+        self.readings[ ord(kanji) ] = readings
+
     def load_kanjidic_readings(self, filename):
         all_readings = {}
         root = ET.parse(filename).getroot()
@@ -25,10 +38,9 @@ class Warifuri():
             readings = []
             for r in character.iter('reading'):
                 if r.get('r_type') in ['ja_on', 'ja_kun']:
-                    reading = r.text.split('.')[0]
-                    readings.append(self.kata_to_hira(reading))
+                    readings.append(reading)
             if char:
-                self.readings[ord(char)] = readings
+                self.load_readings(char, readings)
 
     def split_furi(self, kanjis, furi):
         chars = []
@@ -42,10 +54,6 @@ class Warifuri():
             else:
                 try:
                     readings = self.readings[ord(segment)]
-                    sokuon = [ 'つ', 'ち', 'く', 'き']
-                    for reading in filter(lambda r: r[-1] in sokuon, readings):
-                        readings.append(reading[0:-1] + 'っ')
-                    readings = readings + [self.hira_to_kata(c) for c in readings]
                 except KeyError:
                     readings = [ segment ]
             chars.append('(' + '|'.join(readings) + ')')

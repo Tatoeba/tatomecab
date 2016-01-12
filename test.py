@@ -6,15 +6,18 @@ import unittest
 class WarifuriTest(unittest.TestCase):
     def setUp(self):
         self.warifuri = warifuri.Warifuri()
-        self.warifuri.readings = {
-            ord('間'): ['かん'],   ord('接'): ['せつ'],
-            ord('男'): ['おとこ'], ord('子'): ['こ'],
-            ord('勉'): ['べん'],
-            ord('絶'): ['ぜつ'],   ord('対'): ['たい'],
-            ord('八'): ['はち'],   ord('歳'): ['さい'],
-            ord('学'): ['がく'],   ord('校'): ['こう'],
-            ord('石'): ['せき'],   ord('鹸'): ['けん'],
+        all_readings = {
+            '間': ['かん'],   '接': ['せつ'],
+            '男': ['おとこ'], '子': ['こ'],
+            '勉': ['べん'],
+            '絶': ['ぜつ'],   '対': ['たい'],
+            '八': ['はち'],   '歳': ['さい'],
+            '学': ['がく'],   '校': ['こう'],
+            '石': ['せき'],   '鹸': ['けん'],
+            '仕': ['し'],     '舞': ['ま.う'],
         }
+        for kanji, readings in all_readings.items():
+            self.warifuri.load_readings(kanji, readings)
 
     def assert_split_furi(self, kanjis, readings):
         result = self.warifuri.split_furi(''.join(kanjis), ''.join(readings))
