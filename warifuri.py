@@ -48,7 +48,8 @@ class Warifuri():
         while pref < len(kanjis) and pref < len(furi) and kanjis[pref] == furi[pref]:
             pref = pref + 1
         suff = 0
-        while suff > pref-len(kanjis) and kanjis[suff-1] == furi[suff-1]:
+        while suff > pref-len(kanjis) and suff > pref-len(furi) \
+            and kanjis[suff-1] == furi[suff-1]:
             suff = suff - 1
 
         klist = []

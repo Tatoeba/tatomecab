@@ -70,6 +70,9 @@ class WarifuriTest(unittest.TestCase):
         self.assert_cant_split_furi(['ノーパン'], ['ノーパン'])
         self.assert_cant_split_furi(['かた','パン'], ['カタ','パン'])
 
+    def test_empty_reading(self):
+        self.assert_split_furi(['空'], [''])
+
     def test_sokuonka(self):
         self.assert_split_furi(['絶','対'], ['ぜっ','たい']) # つ
         self.assert_split_furi(['八','歳'], ['はっ','さい']) # ち
