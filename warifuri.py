@@ -38,7 +38,7 @@ class Warifuri():
             readings = []
             for r in character.iter('reading'):
                 if r.get('r_type') in ['ja_on', 'ja_kun']:
-                    readings.append(reading)
+                    readings.append(r.text)
             if char:
                 self.load_readings(char, readings)
 
