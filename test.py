@@ -28,6 +28,9 @@ class WarifuriTest(unittest.TestCase):
     def test_simple(self):
         self.assert_split_furi(('間','接'), ('かん','せつ'))
 
+    def test_simple_kata(self):
+        self.assert_split_furi(('間','接'), ('カン','セツ'))
+
     def test_kana_mix(self):
         self.assert_split_furi(('男','の','子'), ('おとこ','の','こ'))
 

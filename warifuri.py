@@ -8,10 +8,14 @@ class Warifuri():
         kata = "ァアィイゥウェエォオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモャヤュユョヨラリルレロヮワヰヱヲン"
         hira = "ぁあぃいぅうぇえぉおかがきぎくぐけげこごさざしじすずせぜそぞただちぢっつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもゃやゅゆょよらりるれろゎわゐゑをん"
         self.kata_to_hira_map = str.maketrans(kata, hira)
+        self.hira_to_kata_map = str.maketrans(hira, kata)
         self.readings = {}
 
     def kata_to_hira(self, string):
         return string.translate(self.kata_to_hira_map)
+
+    def hira_to_kata(self, string):
+        return string.translate(self.hira_to_kata_map)
 
     def load_kanjidic_readings(self, filename):
         all_readings = {}
@@ -32,6 +36,7 @@ class Warifuri():
         for kanji in kanjis:
             try:
                 readings = self.readings[ord(kanji)]
+                readings = readings + [self.hira_to_kata(c) for c in readings]
             except KeyError:
                 readings = [ kanji ]
             chars.append('(' + '|'.join(readings) + ')')
