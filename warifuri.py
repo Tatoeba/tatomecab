@@ -50,12 +50,12 @@ class Warifuri():
         segments = re.findall(regex, kanjis)
         for segment in segments:
             if (len(segment) > 1):
-                readings = [ segment ]
+                readings = [ segment, self.hira_to_kata(segment) ]
             else:
                 try:
                     readings = self.readings[ord(segment)]
                 except KeyError:
-                    readings = [ segment ]
+                    readings = [ segment, self.hira_to_kata(segment) ]
             chars.append('(' + '|'.join(readings) + ')')
         regex = '^' + ''.join(chars) + '$'
         split = re.findall(regex, furi)

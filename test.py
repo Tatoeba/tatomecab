@@ -21,6 +21,8 @@ class WarifuriTest(unittest.TestCase):
             '校': ['コウ', 'キョウ'],
             '石': ['セキ', 'シャク', 'コク', 'いし'],
             '鹸': ['ケン', 'カン', 'セン', 'あ.く'],
+            '仕': ['シ', 'ジ', 'つか.える'],
+            '舞': ['ブ', 'ま.う', '-ま.う', 'まい'],
         }
         for kanji, readings in all_readings.items():
             self.warifuri.load_readings(kanji, readings)
@@ -42,8 +44,9 @@ class WarifuriTest(unittest.TestCase):
     def test_simple(self):
         self.assert_split_furi(('間','接'), ('かん','せつ'))
 
-    def test_simple_kata(self):
+    def test_katakana(self):
         self.assert_split_furi(('間','接'), ('カン','セツ'))
+        self.assert_split_furi(('仕','舞','い'), ('シ','マ','イ'))
 
     def test_kana_mix(self):
         self.assert_split_furi(('男','の','子'), ('おとこ','の','こ'))
