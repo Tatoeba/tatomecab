@@ -58,10 +58,10 @@ class Warifuri():
             chars.append('(' + '|'.join(readings) + ')')
         regex = '^' + ''.join(chars) + '$'
         split = re.findall(regex, furi)
-        if (split and len(tuple(split[0])) == len(segments)):
-            return [ tuple(segments), tuple(split[0]) ]
+        if (split and len(split[0]) == len(segments)):
+            return (list(segments), list(split[0]))
         else:
-            return [ (kanjis,), (furi,) ]
+            return ([kanjis], [furi])
 
 if __name__ == '__main__':
     warifuri = Warifuri()
