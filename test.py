@@ -38,7 +38,6 @@ class WarifuriTest(unittest.TestCase):
         self.assertEqual([(kanjis,), (readings,)], result)
 
     def test_cant_split(self):
-        expected = [ ('間接',), ('あれあれれ',) ]
         self.assert_cant_split_furi(('間','接'), ('あれ','あれれ'))
 
     def test_simple(self):
