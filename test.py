@@ -57,6 +57,19 @@ class WarifuriTest(unittest.TestCase):
     def test_metachar(self):
         self.assert_split_furi(['(',], ['(',])
 
+    def test_unknown_suffix(self):
+        self.assert_split_furi(['撫','でる'], ['ぶぶー','でる'])
+
+    def test_unknown_prefix(self):
+        self.assert_split_furi(['つけ','方'], ['つけ','ぶぶー'])
+
+    def test_unknown_suffix_and_prefix(self):
+        self.assert_split_furi(['お','試','し'], ['お','ぶぶー','し'])
+
+    def test_no_kanji(self):
+        self.assert_cant_split_furi(['ノーパン'], ['ノーパン'])
+        self.assert_cant_split_furi(['かた','パン'], ['カタ','パン'])
+
     def test_sokuonka(self):
         self.assert_split_furi(['絶','対'], ['ぜっ','たい']) # つ
         self.assert_split_furi(['八','歳'], ['はっ','さい']) # ち
