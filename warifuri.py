@@ -19,6 +19,7 @@ class Warifuri():
 
     def filter_kanjidict_reading(self, reading):
         reading = reading.split('.')[0]
+        reading = reading.replace('-', '')
         reading = self.kata_to_hira(reading)
         return reading
 

@@ -22,7 +22,7 @@ class WarifuriTest(unittest.TestCase):
             '石': ['セキ', 'シャク', 'コク', 'いし'],
             '鹸': ['ケン', 'カン', 'セン', 'あ.く'],
             '仕': ['シ', 'ジ', 'つか.える'],
-            '舞': ['ブ', 'ま.う', '-ま.う', 'まい'],
+            '舞': ['ブ', '-ま.う', 'まい'],
         }
         for kanji, readings in all_readings.items():
             self.warifuri.load_readings(kanji, readings)
