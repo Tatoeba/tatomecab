@@ -55,6 +55,9 @@ class WarifuriTest(unittest.TestCase):
     def test_unknown_kanji(self):
         self.assert_cant_split_furi(('子','供'), ('こ','ども'))
 
+    def test_metachar(self):
+        self.assert_split_furi(('(',), ('(',))
+
     def test_sokuonka(self):
         self.assert_split_furi(('絶','対'), ('ぜっ','たい')) # つ
         self.assert_split_furi(('八','歳'), ('はっ','さい')) # ち

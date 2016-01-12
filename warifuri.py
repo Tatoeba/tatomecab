@@ -54,11 +54,12 @@ class Warifuri():
                 readings = self.readings[ord(segment)]
             except (KeyError, TypeError):
                 readings = [ segment, self.hira_to_kata(segment) ]
+            readings = [re.escape(r) for r in readings]
             chars.append('(' + '|'.join(readings) + ')')
         regex = '^' + ''.join(chars) + '$'
         split = re.findall(regex, furi)
-        if (split and len(split[0]) == len(segments)):
-            return [ tuple(segments), split[0] ]
+        if (split and len(tuple(split[0])) == len(segments)):
+            return [ tuple(segments), tuple(split[0]) ]
         else:
             return [ (kanjis,), (furi,) ]
 
