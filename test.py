@@ -9,6 +9,7 @@ class WarifuriTest(unittest.TestCase):
         self.warifuri.readings = {
             ord('間'): ['かん'],   ord('接'): ['せつ'],
             ord('男'): ['おとこ'], ord('子'): ['こ'],
+            ord('勉'): ['べん'],
             ord('絶'): ['ぜつ'],   ord('対'): ['たい'],
             ord('八'): ['はち'],   ord('歳'): ['さい'],
             ord('学'): ['がく'],   ord('校'): ['こう'],
@@ -37,6 +38,7 @@ class WarifuriTest(unittest.TestCase):
 
     def test_kana_mix(self):
         self.assert_split_furi(('男','の','子'), ('おとこ','の','こ'))
+        self.assert_split_furi(('ノー', '勉',), ('ノー', 'べん',))
 
     def test_unknown_kanji(self):
         self.assert_cant_split_furi(('子','供'), ('こ','ども'))

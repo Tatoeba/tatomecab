@@ -32,22 +32,27 @@ class Warifuri():
 
     def split_furi(self, kanjis, furi):
         chars = []
-        n_kanjis = 0
-        for kanji in kanjis:
-            try:
-                readings = self.readings[ord(kanji)]
-                sokuon = [ 'つ', 'ち', 'く', 'き']
-                for reading in filter(lambda r: r[-1] in sokuon, readings):
-                    readings.append(reading[0:-1] + 'っ')
-                readings = readings + [self.hira_to_kata(c) for c in readings]
-            except KeyError:
-                readings = [ kanji ]
+        # Python re compatible form of ([^\p{Han}]+|.)
+        # Generated using http://www.unicode.org/Public/UCD/latest/ucd/Scripts.txt
+        regex = r'([^\u2E80-\u2E99\u2E9B-\u2EF3\u2F00-\u2FD5\u3005\u3007\u3021-\u3029\u3038-\u303A\u303B\u3400-\u4DB5\u4E00-\u9FD5\uF900-\uFA6D\uFA70-\uFAD9\u20000-\u2A6D6\u2A700-\u2B734\u2B740-\u2B81D\u2B820-\u2CEA1\u2F800-\u2FA1D]+|.)'
+        segments = re.findall(regex, kanjis)
+        for segment in segments:
+            if (len(segment) > 1):
+                readings = [ segment ]
+            else:
+                try:
+                    readings = self.readings[ord(segment)]
+                    sokuon = [ 'つ', 'ち', 'く', 'き']
+                    for reading in filter(lambda r: r[-1] in sokuon, readings):
+                        readings.append(reading[0:-1] + 'っ')
+                    readings = readings + [self.hira_to_kata(c) for c in readings]
+                except KeyError:
+                    readings = [ segment ]
             chars.append('(' + '|'.join(readings) + ')')
-            n_kanjis = n_kanjis + 1
         regex = '^' + ''.join(chars) + '$'
         split = re.findall(regex, furi)
-        if (split and len(split[0]) == n_kanjis):
-            return [ tuple(kanjis), split[0] ]
+        if (split and len(split[0]) == len(segments)):
+            return [ tuple(segments), split[0] ]
         else:
             return [ (kanjis,), (furi,) ]
 
