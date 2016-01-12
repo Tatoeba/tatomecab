@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import xml.etree.ElementTree as ET
-import sys, string, re
+import sys, string, re, csv
 
 class Warifuri():
     def __init__(self):
@@ -95,5 +95,19 @@ class Warifuri():
 
 if __name__ == '__main__':
     warifuri = Warifuri()
+    if len(sys.argv) != 2:
+        print('Usage: {} kanjidic2.xml < dict.csv > dict.furi.splitted.csv'.format(sys.argv[0]))
+        sys.exit(1)
     warifuri.load_kanjidic_readings(sys.argv[1])
-    print(warifuri.split_furi(sys.argv[2], sys.argv[3]))
+    kanji_pos = 0
+    reading_pos = 11
+    mecabdict = csv.writer(sys.stdout)
+    for row in csv.reader(iter(sys.stdin.readline, '')):
+        kanji = row[kanji_pos]
+        reading = row[reading_pos].replace('.', '')
+        kanji, reading = warifuri.split_furi(kanji, reading)
+        splitted_reading = ''
+        for i in range(len(kanji)-1):
+            reading[i] = reading[i] + '.' * len(kanji[i])
+        row[reading_pos] = ''.join(reading)
+        mecabdict.writerow(row)
