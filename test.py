@@ -9,6 +9,10 @@ class WarifuriTest(unittest.TestCase):
         self.warifuri.readings = {
             ord('間'): ['かん'],   ord('接'): ['せつ'],
             ord('男'): ['おとこ'], ord('子'): ['こ'],
+            ord('絶'): ['ぜつ'],   ord('対'): ['たい'],
+            ord('八'): ['はち'],   ord('歳'): ['さい'],
+            ord('学'): ['がく'],   ord('校'): ['こう'],
+            ord('石'): ['せき'],   ord('鹸'): ['けん'],
         }
 
     def assert_split_furi(self, kanjis, readings):
@@ -36,6 +40,12 @@ class WarifuriTest(unittest.TestCase):
 
     def test_unknown_kanji(self):
         self.assert_cant_split_furi(('子','供'), ('こ','ども'))
+
+    def test_sokuonka(self):
+        self.assert_split_furi(('絶','対'), ('ぜっ','たい')) # つ
+        self.assert_split_furi(('八','歳'), ('はっ','さい')) # ち
+        self.assert_split_furi(('学','校'), ('がっ','こう')) # く
+        self.assert_split_furi(('石','鹸'), ('せっ','けん')) # き
 
 if __name__ == '__main__':
     unittest.main()

@@ -36,6 +36,9 @@ class Warifuri():
         for kanji in kanjis:
             try:
                 readings = self.readings[ord(kanji)]
+                sokuon = [ 'つ', 'ち', 'く', 'き']
+                for reading in filter(lambda r: r[-1] in sokuon, readings):
+                    readings.append(reading[0:-1] + 'っ')
                 readings = readings + [self.hira_to_kata(c) for c in readings]
             except KeyError:
                 readings = [ kanji ]
