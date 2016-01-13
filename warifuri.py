@@ -78,7 +78,7 @@ class Warifuri():
                 readings = self.readings[ord(segment)]
             except (KeyError, TypeError):
                 readings = [ segment, self.hira_to_kata(segment) ]
-            readings = [re.escape(r) for r in readings]
+                readings = [ re.escape(r) for r in readings ]
             chars.append('(' + '|'.join(readings) + ')')
         regex = '^' + ''.join(chars) + '$'
         split = re.findall(regex, furi)
