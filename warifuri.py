@@ -87,7 +87,7 @@ class Warifuri():
                     block = ''.join([ '(' + '|'.join(c) + ')' for c in char ])
                     block = '(?:' + block + '|(.+))'
                 regex.append(block)
-        match = re.match(''.join(regex), furi)
+        match = re.match(''.join(regex) + '$', furi)
         if match:
             groups = list(match.groups())
         else:

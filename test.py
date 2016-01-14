@@ -97,5 +97,8 @@ class WarifuriTest(unittest.TestCase):
         self.assert_split_furi(['双','子'], ['ふた','ご'])
         self.assert_split_furi(['一','発'], ['いっ','ぱつ'])
 
+    def test_match_until_the_end_of_the_reading(self):
+        self.assert_split_furi(['舞'], ['まい'])
+
 if __name__ == '__main__':
     unittest.main()
