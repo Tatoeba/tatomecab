@@ -36,7 +36,7 @@ class Warifuri():
         root = ET.parse(filename).getroot()
         for character in root.findall('character'):
             char = character.find('literal').text
-            readings = []
+            readings = [ nanori.text for nanori in character.iter('nanori') ]
             for r in character.iter('reading'):
                 if r.get('r_type') in ['ja_on', 'ja_kun']:
                     readings.append(r.text)
