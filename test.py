@@ -24,6 +24,8 @@ class WarifuriTest(unittest.TestCase):
             '仕': ['シ', 'ジ', 'つか.える'],
             '舞': ['ブ', '-ま.う', 'まい'],
             '双': ['ソウ', 'ふた', 'たぐい', 'ならぶ', 'ふたつ'],
+            '一': ['イチ', 'イツ', 'ひと-', 'ひと.つ'],
+            '発': ['ハツ', 'ホツ', 'た.つ', 'あば.く', 'おこ.る', 'つか.わす', 'はな.つ'],
         }
         for kanji, readings in all_readings.items():
             self.warifuri.load_readings(kanji, readings)
@@ -93,6 +95,7 @@ class WarifuriTest(unittest.TestCase):
 
     def test_rendaku(self):
         self.assert_split_furi(['双','子'], ['ふた','ご'])
+        self.assert_split_furi(['一','発'], ['いっ','ぱつ'])
 
 if __name__ == '__main__':
     unittest.main()

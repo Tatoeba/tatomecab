@@ -9,10 +9,14 @@ class Warifuri():
         hira = "ぁあぃいぅうぇえぉおかがきぎくぐけげこごさざしじすずせぜそぞただちぢっつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもゃやゅゆょよらりるれろゎわゐゑをん"
         self.kata_to_hira_map = str.maketrans(kata, hira)
         self.hira_to_kata_map = str.maketrans(hira, kata)
-        rendaku_from = 'かきくけこさしすせそたちつてとはひふへほ'
-        rendaku_to   = 'がぎぐげござじずぜぞだぢづでどばびぶべぼ'
-        self.rendaku_map = str.maketrans(rendaku_from, rendaku_to)
-        self.rendaku = list(rendaku_from)
+        rendaku = {
+            'か':'が','き':'ぎ','く':'ぐ','け':'げ','こ':'ご',
+            'さ':'ざ','し':'じ','す':'ず','せ':'ぜ','そ':'ぞ',
+            'た':'だ','ち':'ぢ','つ':'づ','て':'で','と':'ど',
+            'は':'ばぱ','ひ':'びぴ','ふ':'ぶぷ','へ':'べぺ','ほ':'ぼぽ',
+        }
+        self.rendaku_map = str.maketrans(rendaku)
+        self.rendaku = list(rendaku)
         self.readings = {}
 
     def kata_to_hira(self, string):
@@ -33,7 +37,9 @@ class Warifuri():
         for reading in filter(lambda r: r[-1] in sokuon and len(r) > 1, readings):
             readings.append(reading[0:-1] + 'っ')
         for reading in filter(lambda r: r[0] in self.rendaku, readings):
-            readings.append(reading[0].translate(self.rendaku_map) + reading[1:])
+            rendaku = reading[0].translate(self.rendaku_map)
+            for char in list(rendaku):
+                readings.append(char + reading[1:])
         readings = readings + [self.hira_to_kata(r) for r in readings]
         self.readings[ ord(kanji) ] = readings
 
