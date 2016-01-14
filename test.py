@@ -37,7 +37,7 @@ class WarifuriTest(unittest.TestCase):
         result = self.warifuri.split_furi(kanjis, readings)
         self.assertEqual(([kanjis], [readings]), result)
 
-    def test_cant_split(self):
+    def test_unknown_reading(self):
         self.assert_cant_split_furi(['間','接'], ['あれ','あれれ'])
 
     def test_simple(self):
@@ -50,6 +50,16 @@ class WarifuriTest(unittest.TestCase):
     def test_kana_mix(self):
         self.assert_split_furi(['男','の','子'], ['おとこ','の','こ'])
         self.assert_split_furi(['ノー', '勉',], ['ノー', 'べん',])
+
+    def test_opportunistic_split(self):
+        self.assert_split_furi(['男','の','子'], ['Xのの','の','こ'])
+        self.assert_split_furi(['男','の','子'], ['おとこ','の','ののX'])
+        self.assert_split_furi(['男','の','子'], ['X','の','Y'])
+        self.assert_split_furi(['男子','の','子'], ['Xのの','の','こ'])
+        self.assert_split_furi(['男','の','男子'], ['おとこ','の','ののX'])
+        self.assert_split_furi(['男','子','の','子'], ['だん','し','の','X'])
+        self.assert_split_furi(['男','の','男','子'], ['X','の','だん','し'])
+        self.assert_split_furi(['お','好','み','焼'], ['お','X','み','X'])
 
     def test_unknown_kanji(self):
         self.assert_cant_split_furi(['子','供'], ['こ','ども'])

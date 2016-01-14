@@ -68,26 +68,52 @@ class Warifuri():
         return (klist, flist)
 
     def split_furi(self, kanjis, furi):
-        chars = []
-        # Python re compatible form of ([^\p{Han}]+|.)
+        chars = [[]]
+        # Python re compatible form of (?P<rest>[^\p{Han}]+)|(?P<kanji>.)
         # Generated using http://www.unicode.org/Public/UCD/latest/ucd/Scripts.txt
-        regex = r'([^\u2E80-\u2E99\u2E9B-\u2EF3\u2F00-\u2FD5\u3005\u3007\u3021-\u3029\u3038-\u303A\u303B\u3400-\u4DB5\u4E00-\u9FD5\uF900-\uFA6D\uFA70-\uFAD9\u20000-\u2A6D6\u2A700-\u2B734\u2B740-\u2B81D\u2B820-\u2CEA1\u2F800-\u2FA1D]+|.)'
-        segments = re.findall(regex, kanjis)
-        for segment in segments:
-            try:
-                readings = self.readings[ord(segment)]
-            except (KeyError, TypeError):
+        regex = r'(?P<rest>[^\u2E80-\u2E99\u2E9B-\u2EF3\u2F00-\u2FD5\u3005\u3007\u3021-\u3029\u3038-\u303A\u303B\u3400-\u4DB5\u4E00-\u9FD5\uF900-\uFA6D\uFA70-\uFAD9\u20000-\u2A6D6\u2A700-\u2B734\u2B740-\u2B81D\u2B820-\u2CEA1\u2F800-\u2FA1D]+)|(?P<kanji>.)'
+        segments = []
+        for match in re.finditer(regex, kanjis):
+            segments.append(match.group(0))
+            token = match.groupdict()
+            if token['kanji']:
+                try:
+                    readings = self.readings[ord(token['kanji'])]
+                except KeyError:
+                    readings = [ token['kanji'] ]
+                chars[-1].append(readings)
+            else:
+                segment = token['rest']
                 readings = [ segment, self.hira_to_kata(segment) ]
                 readings = [ re.escape(r) for r in readings ]
-            chars.append('(' + '|'.join(readings) + ')')
-        regex = '^' + ''.join(chars) + '$'
-        split = re.findall(regex, furi)
-        groups = [ ]
-        if (split):
-            if (type(split[0]) is str):
-                groups = [ split[0] ]
+                chars.append(readings)
+                chars.append([])
+
+        regex = []
+        for i, char in enumerate(chars):
+            char = chars[i]
+            if len(char):
+                if type(char[0]) is str:
+                    block = '(' + '|'.join(char) + ')'
+                else:
+                    block = ''.join([ '(' + '|'.join(c) + ')' for c in char ])
+                    block = '(?:' + block + '|(.+))'
+                regex.append(block)
+        match = re.match(''.join(regex), furi)
+        if match:
+            groups = list(match.groups())
+        else:
+            groups = []
+
+        s = 0
+        for i, item in enumerate(groups):
+            if item is None:
+                if i > 0 and groups[i-1] is None and s+1 < len(segments):
+                    segments[s:s+2] = [ segments[s] + segments[s+1] ]
             else:
-                groups = list(split[0])
+                s = s + 1
+        groups = [ item for item in groups if item is not None ]
+
         if (len(groups) == len(segments)):
             return (segments, groups)
         else:
