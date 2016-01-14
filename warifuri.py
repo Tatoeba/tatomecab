@@ -43,30 +43,6 @@ class Warifuri():
             if char:
                 self.load_readings(char, readings)
 
-    def parallel_trim(self, kanjis, furi):
-        pref = 0
-        while pref < len(kanjis) and pref < len(furi) and kanjis[pref] == furi[pref]:
-            pref = pref + 1
-        suff = 0
-        while suff > pref-len(kanjis) and suff > pref-len(furi) \
-            and kanjis[suff-1] == furi[suff-1]:
-            suff = suff - 1
-
-        klist = []
-        flist = []
-        if (pref < suff + len(kanjis)):
-            if (suff == 0):
-                suff = None
-            klist.append(kanjis[pref:suff])
-            flist.append(furi[pref:suff])
-        if (suff):
-            klist.append(kanjis[suff:])
-            flist.append(furi[suff:])
-        if (pref):
-            klist.insert(0, kanjis[:pref])
-            flist.insert(0, furi[:pref])
-        return (klist, flist)
-
     def split_furi(self, kanjis, furi):
         chars = [[]]
         # Python re compatible form of (?P<rest>[^\p{Han}]+)|(?P<kanji>.)
@@ -117,7 +93,7 @@ class Warifuri():
         if (len(groups) == len(segments)):
             return (segments, groups)
         else:
-            return self.parallel_trim(kanjis, furi)
+            return ([kanjis], [furi])
 
 if __name__ == '__main__':
     warifuri = Warifuri()
