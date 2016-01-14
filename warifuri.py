@@ -109,7 +109,7 @@ if __name__ == '__main__':
     warifuri.load_kanjidic_readings(sys.argv[1])
     kanji_pos = 0
     reading_pos = 11
-    mecabdict = csv.writer(sys.stdout)
+    mecabdict = csv.writer(sys.stdout, lineterminator='\n')
     for row in csv.reader(iter(sys.stdin.readline, '')):
         kanji = row[kanji_pos]
         reading = row[reading_pos].replace('.', '')
