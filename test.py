@@ -66,6 +66,7 @@ class WarifuriTest(unittest.TestCase):
 
     def test_metachar(self):
         self.assert_split_furi(['(',], ['(',])
+        self.assert_split_furi(['?',], ['?',])
 
     def test_unknown_suffix(self):
         self.assert_split_furi(['撫','でる'], ['ぶぶー','でる'])
