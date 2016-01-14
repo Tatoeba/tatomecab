@@ -23,6 +23,7 @@ class WarifuriTest(unittest.TestCase):
             '鹸': ['ケン', 'カン', 'セン', 'あ.く'],
             '仕': ['シ', 'ジ', 'つか.える'],
             '舞': ['ブ', '-ま.う', 'まい'],
+            '双': ['ソウ', 'ふた', 'たぐい', 'ならぶ', 'ふたつ'],
         }
         for kanji, readings in all_readings.items():
             self.warifuri.load_readings(kanji, readings)
@@ -89,6 +90,9 @@ class WarifuriTest(unittest.TestCase):
         self.assert_split_furi(['八','歳'], ['はっ','さい']) # ち
         self.assert_split_furi(['学','校'], ['がっ','こう']) # く
         self.assert_split_furi(['石','鹸'], ['せっ','けん']) # き
+
+    def test_rendaku(self):
+        self.assert_split_furi(['双','子'], ['ふた','ご'])
 
 if __name__ == '__main__':
     unittest.main()
