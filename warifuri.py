@@ -26,7 +26,7 @@ class Warifuri():
     def load_readings(self, kanji, readings):
         readings = [self.filter_kanjidict_reading(r) for r in readings]
         sokuon = [ 'つ', 'ち', 'く', 'き']
-        for reading in filter(lambda r: r[-1] in sokuon, readings):
+        for reading in filter(lambda r: r[-1] in sokuon and len(r) > 1, readings):
             readings.append(reading[0:-1] + 'っ')
         readings = readings + [self.hira_to_kata(r) for r in readings]
         self.readings[ ord(kanji) ] = readings
