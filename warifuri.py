@@ -63,6 +63,7 @@ class Warifuri():
             rendaku = reading[0].translate(self.rendaku_map)
             for char in list(rendaku):
                 readings.append(char + reading[1:])
+        readings = list(set(readings))
         readings = readings + [self.hira_to_kata(r) for r in readings]
         self.readings[ ord(kanji) ] = readings
 
