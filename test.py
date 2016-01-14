@@ -26,6 +26,9 @@ class WarifuriTest(unittest.TestCase):
             '双': ['ソウ', 'ふた', 'たぐい', 'ならぶ', 'ふたつ'],
             '一': ['イチ', 'イツ', 'ひと-', 'ひと.つ'],
             '発': ['ハツ', 'ホツ', 'た.つ', 'あば.く', 'おこ.る', 'つか.わす', 'はな.つ'],
+            '差': ['サ', 'さ.す', 'さ.し'],
+            '入': ['ニュウ', 'ジュ', 'い.る', '-い.る', '-い.り',
+                   'い.れる', '-い.れ', 'はい.る']
         }
         for kanji, readings in all_readings.items():
             self.warifuri.load_readings(kanji, readings)
@@ -96,6 +99,9 @@ class WarifuriTest(unittest.TestCase):
     def test_rendaku(self):
         self.assert_split_furi(['双','子'], ['ふた','ご'])
         self.assert_split_furi(['一','発'], ['いっ','ぱつ'])
+
+    def test_omitted_okurigana(self):
+        self.assert_split_furi(['差','入'], ['さし', 'いれ'])
 
     def test_match_until_the_end_of_the_reading(self):
         self.assert_split_furi(['舞'], ['まい'])

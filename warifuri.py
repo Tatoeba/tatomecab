@@ -17,6 +17,14 @@ class Warifuri():
         }
         self.rendaku_map = str.maketrans(rendaku)
         self.rendaku = list(rendaku)
+        self.okurigana_map = {
+            'う':'い', 'く':'き', 'ぐ':'ぎ', 'す':'し',
+            'つ':'ち', 'ぶ':'び', 'む':'み', 'る':'り',
+        }
+        self.okurigana_first_char = [
+            'え', 'け', 'き', 'せ', 'て', 'ち', 'び',
+            'め', 'み', 'れ', 'り',
+        ]
         self.readings = {}
 
     def kata_to_hira(self, string):
@@ -31,7 +39,22 @@ class Warifuri():
         reading = self.kata_to_hira(reading)
         return reading
 
+    def get_okurigana_inflections(self, readings):
+        inflections = []
+        for reading in readings:
+            parts = reading.split('.', 1)
+            if len(parts) == 2:
+                base, okurigana = parts
+                try:
+                    inflections.append(base + self.okurigana_map[okurigana])
+                except KeyError:
+                    if (len(okurigana) > 1
+                        and okurigana[0] in self.okurigana_first_char):
+                        inflections.append(base + okurigana[0])
+        return inflections
+
     def load_readings(self, kanji, readings):
+        readings = readings + self.get_okurigana_inflections(readings)
         readings = [self.filter_kanjidict_reading(r) for r in readings]
         sokuon = [ 'つ', 'ち', 'く', 'き']
         for reading in filter(lambda r: r[-1] in sokuon and len(r) > 1, readings):
