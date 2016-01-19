@@ -84,8 +84,43 @@ class Warifuri():
             if char:
                 self.load_readings(char, readings)
 
+    def to_regex(self, paths):
+        regex = []
+        for path in paths:
+            if type(path) is tuple:
+                block = ''.join(self.to_regex(path))
+            elif type(path[0]) is bool:
+                readings = path[2]
+                block = '(' + '|'.join(readings) + ')'
+            else:
+                parts = self.to_regex(path)
+                block = '(?:' + '|'.join(parts) + ')'
+            regex.append(block)
+        return regex
+
+    def anything_path(self, kanjis):
+        anything = [[ False, '', [''] ]] * (len(kanjis)-1)
+        anything.append([ False, '', ['.+'] ])
+        return [ tuple(kanjis), tuple(anything) ]
+
+    def add_optimistic_paths(self, paths):
+        new_paths = []
+        kanjis = []
+        for path in paths:
+            is_kanji = path[0]
+            if is_kanji:
+                kanjis.append(path)
+            else:
+                if len(kanjis):
+                    new_paths.append(self.anything_path(kanjis))
+                    kanjis = []
+                new_paths.append(path)
+        if len(kanjis):
+            new_paths.append(self.anything_path(kanjis))
+        return new_paths
+
     def split_furi(self, kanjis, furi):
-        chars = [[]]
+        paths = []
         # Python re compatible form of (?P<rest>[^\p{Han}]+)|(?P<kanji>.)
         # Generated using http://www.unicode.org/Public/UCD/latest/ucd/Scripts.txt
         regex = r'(?P<rest>[^\u2E80-\u2E99\u2E9B-\u2EF3\u2F00-\u2FD5\u3005\u3007\u3021-\u3029\u3038-\u303A\u303B\u3400-\u4DB5\u4E00-\u9FD5\uF900-\uFA6D\uFA70-\uFAD9\U00020000-\U0002A6D6\U0002A700-\U0002B734\U0002B740-\U0002B81D\U0002B820-\U0002CEA1\U0002F800-\U0002FA1D]+)|(?P<kanji>.)'
@@ -98,25 +133,14 @@ class Warifuri():
                     readings = self.readings[ord(token['kanji'])]
                 except KeyError:
                     readings = [ token['kanji'] ]
-                chars[-1].append(readings)
+                paths.append([ True, token['kanji'], readings ])
             else:
                 segment = token['rest']
                 readings = [ segment, self.hira_to_kata(segment) ]
                 readings = [ re.escape(r) for r in readings ]
-                chars.append(readings)
-                chars.append([])
-
-        regex = []
-        for i, char in enumerate(chars):
-            char = chars[i]
-            if len(char):
-                if type(char[0]) is str:
-                    block = '(' + '|'.join(char) + ')'
-                else:
-                    alternate = '()' * (len(char)-1) + '(.+)'
-                    block = ''.join([ '(' + '|'.join(c) + ')' for c in char ])
-                    block = '(?:' + block + '|' + alternate + ')'
-                regex.append(block)
+                paths.append([ False, segment, readings ])
+        paths = self.add_optimistic_paths(paths)
+        regex = self.to_regex(paths)
         match = re.match(''.join(regex) + '$', furi)
         if match:
             groups = list(match.groups())
