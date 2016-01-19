@@ -108,8 +108,9 @@ class Warifuri():
                 if type(char[0]) is str:
                     block = '(' + '|'.join(char) + ')'
                 else:
+                    alternate = '()' * (len(char)-1) + '(.+)'
                     block = ''.join([ '(' + '|'.join(c) + ')' for c in char ])
-                    block = '(?:' + block + '|(.+))'
+                    block = '(?:' + block + '|' + alternate + ')'
                 regex.append(block)
         match = re.match(''.join(regex) + '$', furi)
         if match:
@@ -118,13 +119,13 @@ class Warifuri():
             groups = []
 
         s = 0
+        groups = [ item for item in groups if item is not None ]
         for i, item in enumerate(groups):
-            if item is None:
-                if i > 0 and groups[i-1] is None and s+1 < len(segments):
-                    segments[s:s+2] = [ segments[s] + segments[s+1] ]
+            if i > 0 and groups[i-1] == '' and s < len(segments):
+                segments[s-1:s+1] = [ segments[s-1] + segments[s] ]
             else:
                 s = s + 1
-        groups = [ item for item in groups if item is not None ]
+        groups = [ item for item in groups if item != '' ]
 
         if (len(groups) == len(segments)):
             return (segments, groups)
