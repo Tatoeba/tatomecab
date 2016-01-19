@@ -28,7 +28,8 @@ class WarifuriTest(unittest.TestCase):
             '発': ['ハツ', 'ホツ', 'た.つ', 'あば.く', 'おこ.る', 'つか.わす', 'はな.つ'],
             '差': ['サ', 'さ.す', 'さ.し'],
             '入': ['ニュウ', 'ジュ', 'い.る', '-い.る', '-い.り',
-                   'い.れる', '-い.れ', 'はい.る']
+                   'い.れる', '-い.れ', 'はい.る'],
+            '人': [ 'ジン', 'ニン', 'ひと', '-り', '-と'],
         }
         for kanji, readings in all_readings.items():
             self.warifuri.load_readings(kanji, readings)
@@ -105,6 +106,10 @@ class WarifuriTest(unittest.TestCase):
 
     def test_match_until_the_end_of_the_reading(self):
         self.assert_split_furi(['舞'], ['まい'])
+
+    def test_hito_not_broken_down(self):
+        self.assert_split_furi(['一人'], ['ひとり'])
+        self.assert_split_furi(['二人'], ['ふたり'])
 
 if __name__ == '__main__':
     unittest.main()
