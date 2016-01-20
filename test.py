@@ -37,6 +37,8 @@ class WarifuriTest(unittest.TestCase):
             '地': [ 'チ', 'ジ', 'どま' ],
             '意気地': [ 'い|く|じ' ],
             '大人気': [ 'おとな||げ' ],
+            '荷': [ 'カ', 'に', 'はす', 'り' ],
+            '為替': [ 'かわせ' ],
         }
         for kanjis, readings in all_readings.items():
             self.warifuri.load_readings(kanjis, readings)
@@ -127,6 +129,9 @@ class WarifuriTest(unittest.TestCase):
     def test_splitted_jukujikun(self):
         self.assert_split_furi(['意','気','地'], ['い','く','じ'])
         self.assert_split_furi(['大人','気'], ['おとな','げ'])
+
+    def test_jukujikun_with_rendaku(self):
+        self.assert_split_furi(['荷','為替'], ['に','がわせ'])
 
 if __name__ == '__main__':
     unittest.main()

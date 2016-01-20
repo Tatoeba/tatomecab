@@ -55,23 +55,32 @@ class Warifuri():
                         inflections.append(base + okurigana[0])
         return inflections
 
+    def get_rendaku_variants(self, readings):
+        rendakus = []
+        for reading in filter(lambda r: len(r) and r[0] in self.rendaku, readings):
+            rendaku = reading[0].translate(self.rendaku_map)
+            for char in list(rendaku):
+                rendakus.append(char + reading[1:])
+        return rendakus
+
     def load_kanji_readings(self, kanji, readings):
         readings = readings + self.get_okurigana_inflections(readings)
         readings = [self.filter_kanjidict_reading(r) for r in readings]
         sokuon = [ 'つ', 'ち', 'く', 'き']
         for reading in filter(lambda r: r[-1] in sokuon and len(r) > 1, readings):
             readings.append(reading[0:-1] + 'っ')
-        for reading in filter(lambda r: r[0] in self.rendaku, readings):
-            rendaku = reading[0].translate(self.rendaku_map)
-            for char in list(rendaku):
-                readings.append(char + reading[1:])
+        readings = readings + self.get_rendaku_variants(readings)
         return readings
 
     def load_jukujikun_readings(self, kanjis, readings):
         new_readings = []
         for reading in readings:
-            new_reading = reading.split('|')
-            new_reading = [[r, self.hira_to_kata(r)] for r in new_reading]
+            new_reading = []
+            for r in reading.split('|'):
+                variants = [r]
+                variants = variants + self.get_rendaku_variants(variants)
+                variants = variants + [self.hira_to_kata(v) for v in variants]
+                new_reading.append(variants)
             if len(new_reading) != len(kanjis):
                 filler = (len(kanjis)-len(new_reading)) * ['']
                 new_reading = new_reading + filler
