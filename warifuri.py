@@ -137,8 +137,8 @@ class Warifuri():
                     pos = kanjis.index(jukujikun)
                     j_path = [[ False, '', [''] ]] * (len(jukujikun)-1)
                     j_path.append([ True, jukujikun, readings ])
-                    replacement = [[ tuple(j_path), tuple(paths[0:len(jukujikun)]) ]]
-                    paths[0:len(jukujikun)] = replacement
+                    replacement = [[ tuple(j_path), tuple(paths[pos:pos+len(jukujikun)]) ]]
+                    paths[pos:pos+len(jukujikun)] = replacement
                 except ValueError:
                     pass
             return tuple(paths)

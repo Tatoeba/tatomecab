@@ -115,6 +115,7 @@ class WarifuriTest(unittest.TestCase):
 
     def test_jukujikun(self):
         self.assert_split_furi(['一人', '暮', 'らし'], ['ひとり', 'ぐ', 'らし'])
+        self.assert_split_furi(['一','一人'], ['いち', 'ひとり'])
 
 if __name__ == '__main__':
     unittest.main()
