@@ -133,14 +133,18 @@ class Warifuri():
             paths = list(paths)
             kanjis = ''.join([ p[1] for p in paths ])
             for jukujikun, readings in self.jukukijuns.items():
-                try:
-                    pos = kanjis.index(jukujikun)
+                pos = 0
+                while True:
+                    try:
+                        pos = kanjis.index(jukujikun, pos)
+                    except ValueError:
+                        break
                     j_path = [[ False, '', [''] ]] * (len(jukujikun)-1)
                     j_path.append([ True, jukujikun, readings ])
                     replacement = [[ tuple(j_path), tuple(paths[pos:pos+len(jukujikun)]) ]]
                     paths[pos:pos+len(jukujikun)] = replacement
-                except ValueError:
-                    pass
+                    kanjis = kanjis[:pos] + ' ' + kanjis[pos+len(jukujikun):]
+                    pos = pos + 1
             return tuple(paths)
         elif type(paths) is list and type(paths[0]) is not bool:
             for i, path in enumerate(paths):
