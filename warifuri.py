@@ -55,11 +55,6 @@ class Warifuri():
         return inflections
 
     def load_kanji_readings(self, kanji, readings):
-        if kanji == '人':
-            try:
-                ri = readings.remove('-り')
-            except ValueError:
-                pass
         readings = readings + self.get_okurigana_inflections(readings)
         readings = [self.filter_kanjidict_reading(r) for r in readings]
         sokuon = [ 'つ', 'ち', 'く', 'き']

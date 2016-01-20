@@ -35,6 +35,7 @@ class WarifuriTest(unittest.TestCase):
         }
         for kanjis, readings in all_readings.items():
             self.warifuri.load_readings(kanjis, readings)
+        self.warifuri.load_readings('人', ['ジン','ニン','ひと'])
 
     def assert_split_furi(self, kanjis, readings):
         result = self.warifuri.split_furi(''.join(kanjis), ''.join(readings))
@@ -109,7 +110,7 @@ class WarifuriTest(unittest.TestCase):
     def test_match_until_the_end_of_the_reading(self):
         self.assert_split_furi(['舞'], ['まい'])
 
-    def test_hito_not_broken_down(self):
+    def test_reload_override_readings(self):
         self.assert_split_furi(['一人'], ['ひとり'])
         self.assert_split_furi(['二人'], ['ふたり'])
 
