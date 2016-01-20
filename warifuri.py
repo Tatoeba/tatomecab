@@ -73,7 +73,7 @@ class Warifuri():
             new_reading = [[r, self.hira_to_kata(r)] for r in new_reading]
             if len(new_reading) != len(kanjis):
                 filler = (len(kanjis)-len(new_reading)) * ['']
-                new_reading = filler + new_reading
+                new_reading = new_reading + filler
             new_readings.append(new_reading)
         return new_readings
 
@@ -126,8 +126,8 @@ class Warifuri():
         return regex
 
     def anything_path(self, kanjis):
-        anything = [[ False, '', [''] ]] * (len(kanjis)-1)
-        anything.append([ False, '', ['.+'] ])
+        anything = [[ False, '', ['.+'] ]]
+        anything = anything + [[ False, '', [''] ]] * (len(kanjis)-1)
         return [ tuple(kanjis), tuple(anything) ]
 
     def add_optimistic_paths(self, paths):
@@ -203,7 +203,7 @@ class Warifuri():
         s = 0
         groups = [ item for item in groups if item is not None ]
         for i, item in enumerate(groups):
-            if i > 0 and groups[i-1] == '' and s < len(segments):
+            if i > 0 and groups[i] == '' and s < len(segments):
                 segments[s-1:s+1] = [ segments[s-1] + segments[s] ]
             else:
                 s = s + 1
