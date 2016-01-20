@@ -22,6 +22,6 @@ fi
 
 for csv in $DICT_BASE_NAME/*.csv; do
     echo "Processing $csv..."
-    PYTHONIOENCODING=EUC-JP ./warifuri.py ./kanjidic2.xml < "$csv" > "$csv".new \
+    PYTHONIOENCODING=EUC-JP ./warifuri.py ./kanjidic2.xml ./readings.csv < "$csv" > "$csv".new \
         && mv "$csv".new "$csv"
 done

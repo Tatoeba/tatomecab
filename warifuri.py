@@ -93,6 +93,16 @@ class Warifuri():
             if char:
                 self.load_readings(char, readings)
 
+    def load_csv_readings(self, filename):
+        with open(filename, newline='') as csvfile:
+            readings_reader = csv.reader(csvfile)
+            try:
+                for row in readings_reader:
+                    kanjis, readings = row[0], row[1:]
+                    self.load_readings(kanjis, readings)
+            except csv.Error as e:
+                sys.exit('file {}, line {}: {}'.format(filename, reader.line_num, e))
+
     def to_regex(self, paths):
         regex = []
         for path in paths:
@@ -196,10 +206,14 @@ class Warifuri():
 
 if __name__ == '__main__':
     warifuri = Warifuri()
-    if len(sys.argv) != 2:
-        print('Usage: {} kanjidic2.xml < dict.csv > dict.furi.splitted.csv'.format(sys.argv[0]))
+    if len(sys.argv) < 2:
+        print('Usage: {} kanjidic2.xml [other_readings.csv] < dict.csv > dict.furi.splitted.csv'.format(sys.argv[0]))
         sys.exit(1)
     warifuri.load_kanjidic_readings(sys.argv[1])
+    try:
+        warifuri.load_csv_readings(sys.argv[2])
+    except IndexError:
+        pass
     kanji_pos = 0
     reading_pos = 11
     mecabdict = csv.writer(sys.stdout, lineterminator='\n')
