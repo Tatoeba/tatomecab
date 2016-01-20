@@ -26,6 +26,7 @@ class Warifuri():
             'め', 'み', 'れ', 'り',
         ]
         self.readings = {}
+        self.jukukijuns = {}
 
     def kata_to_hira(self, string):
         return string.translate(self.kata_to_hira_map)
@@ -53,7 +54,7 @@ class Warifuri():
                         inflections.append(base + okurigana[0])
         return inflections
 
-    def load_readings(self, kanji, readings):
+    def load_kanji_readings(self, kanji, readings):
         if kanji == '人':
             try:
                 ri = readings.remove('-り')
@@ -68,9 +69,17 @@ class Warifuri():
             rendaku = reading[0].translate(self.rendaku_map)
             for char in list(rendaku):
                 readings.append(char + reading[1:])
+        return readings
+
+    def load_readings(self, kanjis, readings):
+        if len(kanjis) == 1:
+            readings = self.load_kanji_readings(kanjis, readings)
         readings = list(set(readings))
         readings = readings + [self.hira_to_kata(r) for r in readings]
-        self.readings[ ord(kanji) ] = readings
+        if len(kanjis) == 1:
+            self.readings[ ord(kanjis) ] = readings
+        else:
+            self.jukukijuns[ kanjis ] = readings
 
     def load_kanjidic_readings(self, filename):
         all_readings = {}
@@ -119,6 +128,25 @@ class Warifuri():
             new_paths.append(self.anything_path(kanjis))
         return new_paths
 
+    def add_jukujikun_paths(self, paths):
+        if type(paths) is tuple:
+            paths = list(paths)
+            kanjis = ''.join([ p[1] for p in paths ])
+            for jukujikun, readings in self.jukukijuns.items():
+                try:
+                    pos = kanjis.index(jukujikun)
+                    j_path = [[ False, '', [''] ]] * (len(jukujikun)-1)
+                    j_path.append([ True, jukujikun, readings ])
+                    replacement = [[ tuple(j_path), tuple(paths[0:len(jukujikun)]) ]]
+                    paths[0:len(jukujikun)] = replacement
+                except ValueError:
+                    pass
+            return tuple(paths)
+        elif type(paths) is list and type(paths[0]) is not bool:
+            for i, path in enumerate(paths):
+                paths[i] = self.add_jukujikun_paths(path)
+        return paths
+
     def split_furi(self, kanjis, furi):
         paths = []
         # Python re compatible form of (?P<rest>[^\p{Han}]+)|(?P<kanji>.)
@@ -140,6 +168,7 @@ class Warifuri():
                 readings = [ re.escape(r) for r in readings ]
                 paths.append([ False, segment, readings ])
         paths = self.add_optimistic_paths(paths)
+        paths = self.add_jukujikun_paths(paths)
         regex = self.to_regex(paths)
         match = re.match(''.join(regex) + '$', furi)
         if match:
