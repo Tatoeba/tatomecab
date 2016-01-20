@@ -26,7 +26,7 @@ class Warifuri():
             'め', 'み', 'れ', 'り',
         ]
         self.readings = {}
-        self.jukukijuns = {}
+        self.jukujikuns = {}
 
     def kata_to_hira(self, string):
         return string.translate(self.kata_to_hira_map)
@@ -87,7 +87,7 @@ class Warifuri():
         if len(kanjis) == 1:
             self.readings[ ord(kanjis) ] = readings
         else:
-            self.jukukijuns[ kanjis ] = readings
+            self.jukujikuns[ kanjis ] = readings
 
     def load_kanjidic_readings(self, filename):
         all_readings = {}
@@ -150,7 +150,7 @@ class Warifuri():
         if type(paths) is tuple:
             paths = list(paths)
             kanjis = ''.join([ p[1] for p in paths ])
-            for jukujikun, readings in self.jukukijuns.items():
+            for jukujikun, readings in self.jukujikuns.items():
                 pos = 0
                 while True:
                     try:
