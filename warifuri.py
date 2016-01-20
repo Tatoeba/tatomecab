@@ -66,11 +66,24 @@ class Warifuri():
                 readings.append(char + reading[1:])
         return readings
 
+    def load_jukujikun_readings(self, kanjis, readings):
+        new_readings = []
+        for reading in readings:
+            new_reading = reading.split('|')
+            new_reading = [[r, self.hira_to_kata(r)] for r in new_reading]
+            if len(new_reading) != len(kanjis):
+                filler = (len(kanjis)-len(new_reading)) * ['']
+                new_reading = filler + new_reading
+            new_readings.append(new_reading)
+        return new_readings
+
     def load_readings(self, kanjis, readings):
         if len(kanjis) == 1:
             readings = self.load_kanji_readings(kanjis, readings)
-        readings = list(set(readings))
-        readings = readings + [self.hira_to_kata(r) for r in readings]
+            readings = list(set(readings))
+            readings = readings + [self.hira_to_kata(r) for r in readings]
+        else:
+            readings = self.load_jukujikun_readings(kanjis, readings)
         if len(kanjis) == 1:
             self.readings[ ord(kanjis) ] = readings
         else:
@@ -144,10 +157,12 @@ class Warifuri():
                         pos = kanjis.index(jukujikun, pos)
                     except ValueError:
                         break
-                    j_path = [[ False, '', [''] ]] * (len(jukujikun)-1)
-                    j_path.append([ True, jukujikun, readings ])
-                    replacement = [[ tuple(j_path), tuple(paths[pos:pos+len(jukujikun)]) ]]
-                    paths[pos:pos+len(jukujikun)] = replacement
+                    j_paths = []
+                    for reading in readings:
+                        j_path = [ [False, '', r] for r in reading ]
+                        j_paths.append(tuple(j_path))
+                    replacement = [ j_paths + [tuple(paths[pos:pos+len(jukujikun)])] ]
+                    paths[pos:pos+len(jukujikun)] = [replacement]
                     kanjis = kanjis[:pos] + ' ' + kanjis[pos+len(jukujikun):]
                     pos = pos + 1
             return tuple(paths)
