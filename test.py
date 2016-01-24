@@ -77,6 +77,7 @@ class WarifuriTest(unittest.TestCase):
         self.assert_split_furi(['男','子','の','子'], ['だん','し','の','X'])
         self.assert_split_furi(['男','の','男','子'], ['X','の','だん','し'])
         self.assert_split_furi(['お','好','み','焼'], ['お','X','み','X'])
+        self.assert_split_furi(['ビタミン','Ｅ'], ['ビタミン','Ｅ'])
 
     def test_unknown_kanji(self):
         self.assert_cant_split_furi(['子','供'], ['こ','ども'])

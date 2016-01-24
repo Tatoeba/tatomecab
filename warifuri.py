@@ -193,9 +193,9 @@ class Warifuri():
 
     def split_furi(self, kanjis, furi):
         paths = []
-        # Python re compatible form of (?P<rest>[^\p{Han}]+)|(?P<kanji>.)
+        # Python re compatible form of (?P<rest>[\p{Hiragana}\p{Katakana}ー]+)|(?P<kanji>.)
         # Generated using http://www.unicode.org/Public/UCD/latest/ucd/Scripts.txt
-        regex = r'(?P<rest>[^\u2E80-\u2E99\u2E9B-\u2EF3\u2F00-\u2FD5\u3005\u3007\u3021-\u3029\u3038-\u303A\u303B\u3400-\u4DB5\u4E00-\u9FD5\uF900-\uFA6D\uFA70-\uFAD9\U00020000-\U0002A6D6\U0002A700-\U0002B734\U0002B740-\U0002B81D\U0002B820-\U0002CEA1\U0002F800-\U0002FA1D]+)|(?P<kanji>.)'
+        regex = r'(?P<rest>[\u3041-\u3096\u309D-\u309E\u309F\u30A1-\u30FA\u30FD-\u30FE\u30FF\u31F0-\u31FF\u30FC]+)|(?P<kanji>.)'
         segments = []
         for match in re.finditer(regex, kanjis):
             segments.append(match.group(0))
@@ -204,12 +204,11 @@ class Warifuri():
                 try:
                     readings = self.readings[ord(token['kanji'])]
                 except KeyError:
-                    readings = [ token['kanji'] ]
+                    readings = [ re.escape(token['kanji']) ]
                 paths.append([ True, token['kanji'], readings ])
             else:
                 segment = token['rest']
                 readings = [ segment, self.hira_to_kata(segment) ]
-                readings = [ re.escape(r) for r in readings ]
                 paths.append([ False, segment, readings ])
         paths = self.add_optimistic_paths(paths)
         paths = self.add_jukujikun_paths(paths)
