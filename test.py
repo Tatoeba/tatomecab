@@ -39,6 +39,10 @@ class WarifuriTest(unittest.TestCase):
             '大人気': [ 'おとな||げ' ],
             '荷': [ 'カ', 'に', 'はす', 'り' ],
             '為替': [ 'かわせ' ],
+            '年': [ 'ネン', 'とし', 'ね' ],
+            '中': [ 'チュウ', 'なか', 'うち', 'あた.る' ],
+            '神': ['シン', 'ジン', 'かみ', 'かん-', 'こう-' ],
+            '通': ['ツウ', 'ツ', 'とお.る', 'とお.り', '-とお.り', '-どお.り', 'とお.す', 'とお.し', '-どお.し', 'かよ.う' ],
         }
         for kanjis, readings in all_readings.items():
             self.warifuri.load_readings(kanjis, readings)
@@ -111,6 +115,8 @@ class WarifuriTest(unittest.TestCase):
     def test_rendaku(self):
         self.assert_split_furi(['双','子'], ['ふた','ご'])
         self.assert_split_furi(['一','発'], ['いっ','ぱつ'])
+        self.assert_split_furi(['年','中'], ['ねん','じゅう'])
+        self.assert_split_furi(['神','通'], ['じん','ずう'])
 
     def test_omitted_okurigana(self):
         self.assert_split_furi(['差','入'], ['さし', 'いれ'])
