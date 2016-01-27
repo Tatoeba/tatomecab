@@ -18,8 +18,8 @@ class Warifuri():
         self.rendaku_map = str.maketrans(rendaku)
         self.rendaku = list(rendaku)
         self.okurigana_map = {
-            'う':'[うい]', 'く':'[くき]', 'ぐ':'[ぐぎ]', 'す':'[すし]',
-            'つ':'[つち]', 'ぶ':'[ぶび]', 'む':'[むみ]', 'る':'[るり]',
+            'う':'いう', 'く':'きく', 'ぐ':'ぎぐ', 'す':'しす',
+            'つ':'ちつ', 'ぶ':'びぶ', 'む':'みむ', 'る':'りる',
         }
         self.okurigana_first_char = [
             'え', 'け', 'き', 'せ', 'て', 'ち', 'び',
@@ -48,7 +48,9 @@ class Warifuri():
             if len(parts) == 2:
                 base, okurigana = parts
                 try:
-                    inflections.append(base + self.okurigana_map[okurigana])
+                    okuriganas = self.okurigana_map[okurigana]
+                    for char in list(okuriganas):
+                        inflections.append(base + char)
                 except KeyError:
                     if (len(okurigana) > 1
                         and okurigana[0] in self.okurigana_first_char):
