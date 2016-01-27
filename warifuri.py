@@ -78,8 +78,18 @@ class Warifuri():
     def load_jukujikun_readings(self, kanjis, readings):
         new_readings = []
         for reading in readings:
-            new_reading = []
+            # Strip kana
+            reading_stripped = []
+            i = 0
             for r in reading.split('|'):
+                if kanjis[i] == r:
+                    kanjis = kanjis[:i] + kanjis[i+1:]
+                else:
+                    i = i + 1
+                    reading_stripped.append(r)
+
+            new_reading = []
+            for r in reading_stripped:
                 variants = [r]
                 variants = variants + self.get_rendaku_variants(variants)
                 variants = variants + [self.hira_to_kata(v) for v in variants]
@@ -88,7 +98,7 @@ class Warifuri():
                 filler = (len(kanjis)-len(new_reading)) * ['']
                 new_reading = new_reading + filler
             new_readings.append(new_reading)
-        return new_readings
+        self.insert_jukujikun(kanjis, new_readings)
 
     def insert_jukujikun(self, kanjis, readings):
         self.jukujikuns[ kanjis ] = readings
@@ -105,7 +115,7 @@ class Warifuri():
             readings = list(set(readings))
             readings = readings + [self.hira_to_kata(r) for r in readings]
         else:
-            readings = self.load_jukujikun_readings(kanjis, readings)
+            self.load_jukujikun_readings(kanjis, readings)
         if len(kanjis) == 1:
             code = ord(kanjis)
             try:
@@ -113,8 +123,6 @@ class Warifuri():
             except KeyError:
                 previous = []
             self.readings[code] = previous + readings
-        else:
-            self.insert_jukujikun(kanjis, readings)
 
     def load_kanjidic_readings(self, filename):
         all_readings = {}
