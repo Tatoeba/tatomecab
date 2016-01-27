@@ -18,8 +18,8 @@ class Warifuri():
         self.rendaku_map = str.maketrans(rendaku)
         self.rendaku = list(rendaku)
         self.okurigana_map = {
-            'う':'い', 'く':'き', 'ぐ':'ぎ', 'す':'し',
-            'つ':'ち', 'ぶ':'び', 'む':'み', 'る':'り',
+            'う':'[うい]', 'く':'[くき]', 'ぐ':'[ぐぎ]', 'す':'[すし]',
+            'つ':'[つち]', 'ぶ':'[ぶび]', 'む':'[むみ]', 'る':'[るり]',
         }
         self.okurigana_first_char = [
             'え', 'け', 'き', 'せ', 'て', 'ち', 'び',
