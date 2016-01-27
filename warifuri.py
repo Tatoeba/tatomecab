@@ -130,7 +130,7 @@ class Warifuri():
 
     def load_csv_readings(self, filename):
         with open(filename, newline='') as csvfile:
-            readings_reader = csv.reader(csvfile)
+            readings_reader = csv.reader(csvfile, delimiter='\t')
             try:
                 for row in readings_reader:
                     kanjis, readings = row[0], row[1:]
