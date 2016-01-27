@@ -136,12 +136,12 @@ class Warifuri():
                     if len(row) == 0 or row[0][0] == '#':
                         continue
                     try:
-                        kanjis, readings = row[0], row[1:]
+                        kanjis, readings = row[0], [row[1]]
                     except IndexError:
-                        continue
+                        sys.exit('file {}, line {}: malformed line'.format(filename, readings_reader.line_num))
                     self.add_readings(kanjis, readings)
             except csv.Error as e:
-                sys.exit('file {}, line {}: {}'.format(filename, reader.line_num, e))
+                sys.exit('file {}, line {}: {}'.format(filename, readings_reader.line_num, e))
 
     def to_regex(self, paths):
         regex = []
