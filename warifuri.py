@@ -133,7 +133,12 @@ class Warifuri():
             readings_reader = csv.reader(csvfile, delimiter='\t')
             try:
                 for row in readings_reader:
-                    kanjis, readings = row[0], row[1:]
+                    if len(row) == 0 or row[0][0] == '#':
+                        continue
+                    try:
+                        kanjis, readings = row[0], row[1:]
+                    except IndexError:
+                        continue
                     self.add_readings(kanjis, readings)
             except csv.Error as e:
                 sys.exit('file {}, line {}: {}'.format(filename, reader.line_num, e))
