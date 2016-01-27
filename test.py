@@ -9,7 +9,7 @@ class WarifuriTest(unittest.TestCase):
         all_readings = {
             '間': ['カン', 'ケン', 'あいだ', 'ま', 'あい'],
             '接': ['セツ', 'ショウ', 'つ.ぐ'],
-            '男': ['ダン', 'ナン', 'おとこ', 'お'],
+            '男': ['ダン', 'ナン'],
             '子': ['シ', 'ス', 'ツ', 'こ', '-こ', 'ね'],
             '勉': ['ベン', 'つと.める'],
             '絶': ['ゼツ', 'た.える', 'た.やす', 'た.つ'],
@@ -54,8 +54,8 @@ class WarifuriTest(unittest.TestCase):
             '殿': ['デン', 'テン', 'との', '-どの', 'て', 'どん' ],
         }
         for kanjis, readings in all_readings.items():
-            self.warifuri.load_readings(kanjis, readings)
-        self.warifuri.load_readings('人', ['ジン','ニン','ひと'])
+            self.warifuri.add_readings(kanjis, readings)
+        self.warifuri.add_readings('男', ['おとこ', 'お'])
 
     def assert_split_furi(self, kanjis, readings):
         result = self.warifuri.split_furi(''.join(kanjis), ''.join(readings))

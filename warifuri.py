@@ -99,7 +99,7 @@ class Warifuri():
             pos = pos + 1
         self.jukujikuns_list.insert(pos, kanjis)
 
-    def load_readings(self, kanjis, readings):
+    def add_readings(self, kanjis, readings):
         if len(kanjis) == 1:
             readings = self.load_kanji_readings(kanjis, readings)
             readings = list(set(readings))
@@ -107,7 +107,12 @@ class Warifuri():
         else:
             readings = self.load_jukujikun_readings(kanjis, readings)
         if len(kanjis) == 1:
-            self.readings[ ord(kanjis) ] = readings
+            code = ord(kanjis)
+            try:
+                previous = self.readings[code]
+            except KeyError:
+                previous = []
+            self.readings[code] = previous + readings
         else:
             self.insert_jukujikun(kanjis, readings)
 
@@ -121,7 +126,7 @@ class Warifuri():
                 if r.get('r_type') in ['ja_on', 'ja_kun']:
                     readings.append(r.text)
             if char:
-                self.load_readings(char, readings)
+                self.add_readings(char, readings)
 
     def load_csv_readings(self, filename):
         with open(filename, newline='') as csvfile:
@@ -129,7 +134,7 @@ class Warifuri():
             try:
                 for row in readings_reader:
                     kanjis, readings = row[0], row[1:]
-                    self.load_readings(kanjis, readings)
+                    self.add_readings(kanjis, readings)
             except csv.Error as e:
                 sys.exit('file {}, line {}: {}'.format(filename, reader.line_num, e))
 
