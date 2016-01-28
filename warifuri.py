@@ -4,6 +4,8 @@ import xml.etree.ElementTree as ET
 import sys, string, re, csv
 
 class Warifuri():
+    test_readings = False
+
     def __init__(self):
         kata = "ァアィイゥウェエォオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモャヤュユョヨラリルレロヮワヰヱヲン"
         hira = "ぁあぃいぅうぇえぉおかがきぎくぐけげこごさざしじすずせぜそぞただちぢっつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもゃやゅゆょよらりるれろゎわゐゑをん"
@@ -235,7 +237,11 @@ class Warifuri():
                 segment = token['rest']
                 readings = [ segment, self.hira_to_kata(segment) ]
                 paths.append([ False, segment, readings ])
-        paths = self.add_optimistic_paths(paths)
+
+        if self.test_readings:
+            paths = [tuple(paths)]
+        else:
+            paths = self.add_optimistic_paths(paths)
         paths = self.add_jukujikun_paths(paths)
         regex = self.to_regex(paths)
         match = re.match(''.join(regex) + '$', furi)
@@ -256,23 +262,40 @@ class Warifuri():
         if (len(groups) == len(segments)):
             return (segments, groups)
         else:
-            return ([kanjis], [furi])
+            raise ValueError('Unable to split furigana')
 
 if __name__ == '__main__':
-    warifuri = Warifuri()
-    if len(sys.argv) < 2:
-        print('Usage: {} kanjidic2.xml [other_readings.csv] < dict.csv > dict.furi.splitted.csv'.format(sys.argv[0]))
+    import getopt
+
+    opts, args = getopt.getopt(sys.argv[1:], 'r', ['--test-readings'])
+
+    if len(args) == 0:
+        print('Usage: {} [-r|--test-readings] kanjidic2.xml [other_readings.csv] < dict.csv > dict.furi.splitted.csv'.format(sys.argv[0]))
         sys.exit(1)
-    warifuri.load_kanjidic_readings(sys.argv[1])
-    if len(sys.argv) > 2:
-        warifuri.load_csv_readings(sys.argv[2])
+
+    warifuri = Warifuri()
+    for opt, optarg in opts:
+        if opt in ['-r', '--test-readings']:
+            warifuri.test_readings = True
+
+    warifuri.load_kanjidic_readings(args[0])
+    if len(args) > 1:
+        warifuri.load_csv_readings(args[1])
+
     kanji_pos = 0
     reading_pos = 11
     mecabdict = csv.writer(sys.stdout, lineterminator='\n')
+    mecabdicterror = csv.writer(sys.stderr, lineterminator='\n')
     for row in csv.reader(iter(sys.stdin.readline, '')):
         kanji = row[kanji_pos]
         reading = row[reading_pos].replace('.', '')
-        kanji, reading = warifuri.split_furi(kanji, reading)
+        try:
+            kanji, reading = warifuri.split_furi(kanji, reading)
+        except ValueError:
+            kanji, reading = [kanji], [reading]
+            if warifuri.test_readings:
+                mecabdicterror.writerow(row)
+                continue
         splitted_reading = ''
         for i in range(len(kanji)-1):
             reading[i] = reading[i] + '.' * len(kanji[i])
