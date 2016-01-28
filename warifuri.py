@@ -265,18 +265,21 @@ class Warifuri():
             raise ValueError('Unable to split furigana')
 
 if __name__ == '__main__':
-    import getopt
+    import getopt, time
 
-    opts, args = getopt.getopt(sys.argv[1:], 'r', ['--test-readings'])
+    opts, args = getopt.getopt(sys.argv[1:], 'tr', ['--time', '--test-readings'])
 
     if len(args) == 0:
         print('Usage: {} [-r|--test-readings] kanjidic2.xml [other_readings.csv] < dict.csv > dict.furi.splitted.csv'.format(sys.argv[0]))
         sys.exit(1)
 
     warifuri = Warifuri()
+    timeit = False
     for opt, optarg in opts:
         if opt in ['-r', '--test-readings']:
             warifuri.test_readings = True
+        elif opt in ['-t', '--time']:
+            timeit = True
 
     warifuri.load_kanjidic_readings(args[0])
     if len(args) > 1:
@@ -286,6 +289,8 @@ if __name__ == '__main__':
     reading_pos = 11
     mecabdict = csv.writer(sys.stdout, lineterminator='\n')
     mecabdicterror = csv.writer(sys.stderr, lineterminator='\n')
+    if timeit:
+        time_start = time.time()
     for row in csv.reader(iter(sys.stdin.readline, '')):
         kanji = row[kanji_pos]
         reading = row[reading_pos].replace('.', '')
@@ -301,3 +306,6 @@ if __name__ == '__main__':
             reading[i] = reading[i] + '.' * len(kanji[i])
         row[reading_pos] = ''.join(reading)
         mecabdict.writerow(row)
+    if timeit:
+        time_end = time.time()
+        sys.stderr.write('Took %0.3fs\n' % (time_end-time_start))
