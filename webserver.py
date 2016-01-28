@@ -69,6 +69,5 @@ if __name__ == '__main__':
             port = int(optarg)
 
     httpd = BaseHTTPServer.HTTPServer((host, port), TatoMecabHandler)
-    httpd.allow_reuse_address = True
     httpd.serve_forever()
 
