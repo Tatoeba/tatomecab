@@ -264,10 +264,8 @@ if __name__ == '__main__':
         print('Usage: {} kanjidic2.xml [other_readings.csv] < dict.csv > dict.furi.splitted.csv'.format(sys.argv[0]))
         sys.exit(1)
     warifuri.load_kanjidic_readings(sys.argv[1])
-    try:
+    if len(sys.argv) > 2:
         warifuri.load_csv_readings(sys.argv[2])
-    except IndexError:
-        pass
     kanji_pos = 0
     reading_pos = 11
     mecabdict = csv.writer(sys.stdout, lineterminator='\n')
