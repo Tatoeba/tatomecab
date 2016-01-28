@@ -11,14 +11,15 @@ class TatoMeCab():
         kata = u"ァアィイゥウェエォオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモャヤュユョヨラリルレロヮワヰヱヲンヴヵヶ"
         hira = u"ぁあぃいぅうぇえぉおかがきぎくぐけげこごさざしじすずせぜそぞただちぢっつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもゃやゅゆょよらりるれろゎわゐゑをんゔゕゖ"
         self.kata_to_hira_map = dict((ord(kata[i]), hira[i]) for i in xrange(len(kata)))
-        self.kanas = dict((ord(char), None) for char in kata + hira + u"ー")
+        punct = u"ー・"
+        self.chars_without_furi = dict((ord(char), None) for char in kata + hira + punct)
 
     def kata_to_hira(self, kata_str):
         return kata_str.translate(self.kata_to_hira_map)
 
-    def is_kana_only(self, string):
+    def needs_furigana(self, string):
         for char in string:
-            if not ord(char) in self.kanas:
+            if not ord(char) in self.chars_without_furi:
                 return False
         return True
 
@@ -45,7 +46,7 @@ class TatoMeCab():
             return u''
 
     def strip_unneeded_readings(self, tokens):
-        return [(kanjis, None) if kanjis == reading or self.is_kana_only(kanjis) or kanjis == '"' else (kanjis, reading) for kanjis, reading in tokens]
+        return [(kanjis, None) if kanjis == reading or self.needs_furigana(kanjis) or kanjis == '"' else (kanjis, reading) for kanjis, reading in tokens]
 
     def parse_furi(self, kanjis, furigana):
         parsed = []
