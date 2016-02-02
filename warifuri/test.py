@@ -55,6 +55,8 @@ class WarifuriTest(unittest.TestCase):
             '衣被ぎ': [ 'きぬ|かつ|ぎ' ],
             '蝶': ['チョウ' ],
             '番': ['バン', 'つが.い' ],
+            '川': ['セン', 'かわ' ],
+            '逆': ['ギャク', 'ゲキ', 'さか', 'さか.さ', 'さか.らう' ],
         }
         for kanjis, readings in all_readings.items():
             self.warifuri.add_readings(kanjis, readings)
@@ -137,6 +139,7 @@ class WarifuriTest(unittest.TestCase):
         self.assert_split_furi(['揚','羽'], ['あげ', 'は'])
         self.assert_split_furi(['大','殿'], ['おおい', 'どの'])
         self.assert_split_furi(['蝶','番'], ['ちょう', 'つがい'])
+        self.assert_split_furi(['逆','川'], ['さかさ', 'がわ'])
 
     def test_sokuon_with_omitted_okurigana(self):
         self.assert_split_furi(['討','手'], ['うっ', 'て'])
