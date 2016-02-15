@@ -76,6 +76,10 @@ class TatoMeCab():
         while node:
             if node.stat != MeCab.MECAB_BOS_NODE and \
                node.stat != MeCab.MECAB_EOS_NODE:
+                space_len = node.rlength - node.length
+                if space_len > 0:
+                    spaces = ' ' * space_len
+                    tokens.append([(spaces, None)])
                 kanjis = node.surface.decode('utf-8')
                 reading = self.get_reading(node.feature.decode('utf-8'))
                 reading = self.kata_to_hira(reading)
