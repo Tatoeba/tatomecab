@@ -2,7 +2,7 @@
 
 import xml.etree.ElementTree as ET
 import sys, string, re, csv
-from multiprocessing import Pool, Queue
+from multiprocessing import Pool, Queue, Lock
 
 class Warifuri():
     test_readings = False
@@ -283,7 +283,7 @@ class Warifuri():
         row[reading_pos] = ''.join(reading)
         return row
 
-def worker_main(queue, warifuri, output_csv, error_csv):
+def worker_main(warifuri, queue, lock, output_csv, error_csv):
     while True:
         item = queue.get(True)
         if item == None:
@@ -291,10 +291,12 @@ def worker_main(queue, warifuri, output_csv, error_csv):
             break
         else:
             row = warifuri.parse_csv_row(item)
+            lock.acquire()
             if row:
                 output_csv.writerow(row)
             else:
                 error_csv.writerow(item)
+            lock.release()
 
 if __name__ == '__main__':
     import getopt, time
@@ -323,8 +325,9 @@ if __name__ == '__main__':
         time_start = time.time()
 
     queue = Queue(maxsize=5)
+    lock = Lock()
     pool = Pool(initializer=worker_main,
-                initargs=(queue, warifuri, mecabdict, mecabdicterror))
+                initargs=(warifuri, queue, lock, mecabdict, mecabdicterror))
 
     for line in csv.reader(iter(sys.stdin.readline, '')):
         queue.put(line)
