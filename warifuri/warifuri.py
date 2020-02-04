@@ -2,6 +2,7 @@
 
 import xml.etree.ElementTree as ET
 import sys, string, re, csv
+from multiprocessing import Pool, Queue
 
 class Warifuri():
     test_readings = False
@@ -265,6 +266,36 @@ class Warifuri():
         else:
             raise ValueError('Unable to split furigana')
 
+    def parse_csv_row(self, row):
+        kanji_pos = 0
+        reading_pos = 11
+        kanji = row[kanji_pos]
+        reading = row[reading_pos].replace('.', '')
+        try:
+            kanji, reading = self.split_furi(kanji, reading)
+        except ValueError:
+            if warifuri.test_readings:
+                return None
+            kanji, reading = [kanji], [reading]
+
+        for i in range(len(kanji)-1):
+            reading[i] = reading[i] + '.' * len(kanji[i])
+        row[reading_pos] = ''.join(reading)
+        return row
+
+def worker_main(queue, warifuri, output_csv, error_csv):
+    while True:
+        item = queue.get(True)
+        if item == None:
+            queue.put(None)
+            break
+        else:
+            row = warifuri.parse_csv_row(item)
+            if row:
+                output_csv.writerow(row)
+            else:
+                error_csv.writerow(item)
+
 if __name__ == '__main__':
     import getopt, time
 
@@ -286,27 +317,20 @@ if __name__ == '__main__':
     if len(args) > 1:
         warifuri.load_csv_readings(args[1])
 
-    kanji_pos = 0
-    reading_pos = 11
     mecabdict = csv.writer(sys.stdout, lineterminator='\n')
     mecabdicterror = csv.writer(sys.stderr, lineterminator='\n')
     if timeit:
         time_start = time.time()
-    for row in csv.reader(iter(sys.stdin.readline, '')):
-        kanji = row[kanji_pos]
-        reading = row[reading_pos].replace('.', '')
-        try:
-            kanji, reading = warifuri.split_furi(kanji, reading)
-        except ValueError:
-            kanji, reading = [kanji], [reading]
-            if warifuri.test_readings:
-                mecabdicterror.writerow(row)
-                continue
-        splitted_reading = ''
-        for i in range(len(kanji)-1):
-            reading[i] = reading[i] + '.' * len(kanji[i])
-        row[reading_pos] = ''.join(reading)
-        mecabdict.writerow(row)
+
+    queue = Queue(maxsize=5)
+    pool = Pool(initializer=worker_main,
+                initargs=(queue, warifuri, mecabdict, mecabdicterror))
+
+    for line in csv.reader(iter(sys.stdin.readline, '')):
+        queue.put(line)
+    queue.put(None)
+    pool.close()
+    pool.join()
     if timeit:
         time_end = time.time()
         sys.stderr.write('Took %0.3fs\n' % (time_end-time_start))
