@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # coding: utf-8
 
 import MeCab
@@ -92,12 +91,3 @@ class TatoMeCab():
                 tokens.append(self.parse_furi(kanjis, reading))
             node = node.next
         return tokens
-
-if __name__ == '__main__':
-    import sys
-    t = TatoMeCab()
-    for line in iter(sys.stdin.readline, ''):
-        tokens = t.parse(line)
-        for subtokens in tokens:
-            for kanji, reading in subtokens:
-                print("%s\t%s" % (kanji, reading))

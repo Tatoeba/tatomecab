@@ -1,0 +1,13 @@
+#!/usr/bin/python
+# coding: utf-8
+
+from tatomecab import TatoMeCab
+
+if __name__ == '__main__':
+    import sys
+    t = TatoMeCab()
+    for line in iter(sys.stdin.readline, ''):
+        tokens = t.parse(line)
+        for subtokens in tokens:
+            for kanji, reading in subtokens:
+                print("%s\t%s" % (kanji, reading))
