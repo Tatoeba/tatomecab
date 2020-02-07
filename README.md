@@ -24,7 +24,8 @@ $ echo 振り仮名をつけろう | ./tatomecab.py
 Exposes the tatomecab library as a webservice.
 
 ```sh
-$ curl http://127.0.0.1:8842/furigana?str=振り仮名をつけろう
+$ curl http://127.0.0.1:8842/furigana -G --data-urlencode str=振り仮名をつけろう
+# Actual URL is http://127.0.0.1:8842/furigana?str=%E6%8C%AF%E3%82%8A%E4%BB%AE%E5%90%8D%E3%82%92%E3%81%A4%E3%81%91%E3%82%8D%E3%81%86
 ```
 
 ```xml

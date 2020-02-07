@@ -1,14 +1,20 @@
-#!/usr/bin/python2
+#!/usr/bin/python
 
 import sys
 import getopt
 
-import BaseHTTPServer
-from urllib import unquote_plus
+try:
+    from urllib.parse import unquote_plus
+    from http.server import SimpleHTTPRequestHandler
+    import socketserver
+except ImportError: # Python 2 backward compatibility
+    from urllib import unquote_plus
+    from BaseHTTPServer import BaseHTTPRequestHandler as SimpleHTTPRequestHandler
+    import BaseHTTPServer
 
 from tatomecab import TatoMeCab
 
-class TatoMecabHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+class TatoMecabHandler(SimpleHTTPRequestHandler):
     tatomecab = TatoMeCab()
 
     def log_request(code='-', size='-'):
@@ -68,6 +74,9 @@ if __name__ == '__main__':
         elif opt == '-p':
             port = int(optarg)
 
-    httpd = BaseHTTPServer.HTTPServer((host, port), TatoMecabHandler)
+    try:
+        httpd = socketserver.TCPServer((host, port), TatoMecabHandler)
+    except NameError: # Python 2 backward compatibility
+        httpd = BaseHTTPServer.HTTPServer((host, port), TatoMecabHandler)
     httpd.serve_forever()
 

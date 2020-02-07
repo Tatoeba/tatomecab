@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python
 # coding: utf-8
 
 import MeCab
@@ -10,7 +10,7 @@ class TatoMeCab():
     def __init__(self):
         kata = u"ァアィイゥウェエォオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモャヤュユョヨラリルレロヮワヰヱヲンヴヵヶ"
         hira = u"ぁあぃいぅうぇえぉおかがきぎくぐけげこごさざしじすずせぜそぞただちぢっつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもゃやゅゆょよらりるれろゎわゐゑをんゔゕゖ"
-        self.kata_to_hira_map = dict((ord(kata[i]), hira[i]) for i in xrange(len(kata)))
+        self.kata_to_hira_map = dict((ord(kata[i]), hira[i]) for i in range(len(kata)))
         punct = u"ー・"
         self.chars_without_furi = dict((ord(char), None) for char in kata + hira + punct)
 
@@ -80,8 +80,14 @@ class TatoMeCab():
                 if space_len > 0:
                     spaces = ' ' * space_len
                     tokens.append([(spaces, None)])
-                kanjis = node.surface.decode('utf-8')
-                reading = self.get_reading(node.feature.decode('utf-8'))
+                try:
+                    kanjis = node.surface.decode('utf-8')
+                except AttributeError: # Python 2 backward compatibility
+                    kanjis = node.surface
+                try:
+                    reading = self.get_reading(node.feature.decode('utf-8'))
+                except AttributeError: # Python 2 backward compatibility
+                    reading = self.get_reading(node.feature)
                 reading = self.kata_to_hira(reading)
                 tokens.append(self.parse_furi(kanjis, reading))
             node = node.next
