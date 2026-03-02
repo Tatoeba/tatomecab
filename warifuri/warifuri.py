@@ -222,9 +222,9 @@ class Warifuri():
 
     def split_furi(self, kanjis, furi):
         paths = []
-        # Python re compatible form of (?P<rest>[\p{Hiragana}\p{Katakana}ー]+)|(?P<kanji>.)
+        # Python re compatible form of (?!ヶ)(?P<rest>[\p{Hiragana}\p{Katakana}ー]+)|(?P<kanji>.)
         # Generated using http://www.unicode.org/Public/UCD/latest/ucd/Scripts.txt
-        regex = r'(?P<rest>[\u3041-\u3096\u309D-\u309E\u309F\u30A1-\u30FA\u30FD-\u30FE\u30FF\u31F0-\u31FF\u30FC]+)|(?P<kanji>.)'
+        regex = r'(?!ヶ)(?P<rest>[\u3041-\u3096\u309D-\u309E\u309F\u30A1-\u30FA\u30FD-\u30FE\u30FF\u31F0-\u31FF\u30FC]+)|(?P<kanji>.)'
         segments = []
         for match in re.finditer(regex, kanjis):
             segments.append(match.group(0))

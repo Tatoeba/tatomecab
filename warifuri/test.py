@@ -57,6 +57,8 @@ class WarifuriTest(unittest.TestCase):
             '番': ['バン', 'つが.い' ],
             '川': ['セン', 'かわ' ],
             '逆': ['ギャク', 'ゲキ', 'さか', 'さか.さ', 'さか.らう' ],
+            '月': ['ゲツ', 'ガツ', 'つき'],
+            'ヶ': ['か'],
         }
         for kanjis, readings in all_readings.items():
             self.warifuri.add_readings(kanjis, readings)
@@ -166,6 +168,9 @@ class WarifuriTest(unittest.TestCase):
 
     def test_jukujikun_with_okurigana(self):
         self.assert_split_furi(['衣','被','ぎ'], ['きぬ','かつ','ぎ'])
+
+    def test_small_ke(self):
+        self.assert_split_furi(['ヶ', '月'], ['か','げつ'])
 
 if __name__ == '__main__':
     unittest.main()
