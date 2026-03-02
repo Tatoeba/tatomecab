@@ -2,7 +2,7 @@
 
 import xml.etree.ElementTree as ET
 import sys, string, re, csv
-from multiprocessing import Pool, Queue, Lock
+from multiprocessing.dummy import Pool, Queue, Lock
 
 class Warifuri():
     test_readings = False
