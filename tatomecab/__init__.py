@@ -8,6 +8,7 @@ class TatoMeCab():
 
     def __init__(self):
         kata = u"ァアィイゥウェエォオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモャヤュユョヨラリルレロヮワヰヱヲンヴヵヶ"
+        kata = kata.replace('ヶ', '')  # for 2ヶ月 etc.
         hira = u"ぁあぃいぅうぇえぉおかがきぎくぐけげこごさざしじすずせぜそぞただちぢっつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもゃやゅゆょよらりるれろゎわゐゑをんゔゕゖ"
         self.kata_to_hira_map = dict((ord(kata[i]), hira[i]) for i in range(len(kata)))
         punct = u"ー・"
