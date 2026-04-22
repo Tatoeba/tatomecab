@@ -15,7 +15,7 @@ if [ ! -e kanjidic2.xml ]; then
 fi
 
 DICT_BASE_NAME=mecab-naist-jdic-0.6.3b-20111013
-maybe_download "$DICT_BASE_NAME.tar.gz" "http://iij.dl.sourceforge.jp/naist-jdic/53500/mecab-naist-jdic-0.6.3b-20111013.tar.gz"
+maybe_download "$DICT_BASE_NAME.tar.gz" "http://deb.debian.org/debian/pool/main/m/mecab-naist-jdic/mecab-naist-jdic_0.6.3.b-20111013.orig.tar.gz"
 if [ ! -d "$DICT_BASE_NAME" ]; then
     tar xf "$DICT_BASE_NAME.tar.gz"
 fi
